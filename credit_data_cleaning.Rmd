@@ -89,7 +89,7 @@ data %>% group_by(credit_history) %>% summarise(count = n())
 
 ```{r}
 data %>% group_by(savings_status) %>% summarise(count = n()) 
-````
+```
 
 It also has 5 categories in savings status. let change the label and provide an order.
 
@@ -111,7 +111,7 @@ data %>% group_by(savings_status) %>% summarise(count = n())
 
 ```{r}
 data %>% group_by(employment) %>% summarise(count = n()) 
-````
+```
 
 It has 5 categories in employment. I will again change the label and provide an order.
 
@@ -124,7 +124,7 @@ data$employment <- factor(data$employment,
                                          "more than 7 years"))
 
 data %>% group_by(employment) %>% summarise(count = n()) 
-````
+```
 
 
 **purpose**
@@ -141,11 +141,11 @@ data$purpose <- factor(data$purpose)
 ```
 
 
-***foreign worker ***
+**foreign worker**
 
 ```{r}
 data %>% group_by(foreign_worker) %>% summarise(count = n()) 
-````
+```
 
 It has 2 categories. Let change the data type to factor.
 
@@ -158,21 +158,21 @@ data$foreign_worker <- factor(data$foreign_worker)
 
 ```{r}
 data %>% group_by(own_telephone) %>% summarise(count = n()) 
-````
+```
 
 It also has 2 categories. I will change the data type to factor and rename the label.
 
 ```{r}
 data$own_telephone <- factor(data$own_telephone,
                              labels= c("no", "yes"))
-````
+```
 
 
 **job**
 
 ```{r}
 data %>% group_by(job) %>% summarise(count = n()) 
-````
+```
 
 It has 4 categories. I will let change the label and the order.
 
@@ -194,7 +194,7 @@ data %>% group_by(job) %>% summarise(count = n())
 
 ```{r}
 data %>% group_by(housing) %>% summarise(count = n()) 
-````
+```
 
 It has 3 categories.Again, let change the label and the order.
 
@@ -204,14 +204,14 @@ data$housing <- factor(data$housing,
                    labels= c("rented", "free use", "owned"))
 
 data %>% group_by(housing) %>% summarise(count = n())
-````
+```
                          
 
 **other payment plans: other debts **
 
 ```{r}
 data %>% group_by(other_payment_plans) %>% summarise(count = n()) 
-````
+```
 
 It has 3 categories. Let change the label and the order.
 
@@ -221,7 +221,7 @@ data$other_payment_plans <- factor(data$other_payment_plans,
                        labels= c("bank debt", "purchase debt", "no debt"))
 
 data %>% group_by(other_payment_plans) %>% summarise(count = n()) 
-````
+```
 
 
 **property magnitude: collateral**
@@ -251,7 +251,7 @@ data %>% group_by(property_magnitude) %>% summarise(count = n())
 
 ```{r}
 data %>% group_by(other_parties) %>% summarise(count = n()) 
-````
+```
 
 It has 3 categories. I will change the label and the order.
 
@@ -265,14 +265,14 @@ data$other_parties <- factor(data$other_parties,
                                             "guaranteed"))
 
 data %>% group_by(other_parties) %>% summarise(count = n()) 
-````
+```
 
 
 **personal_status**
 
 ```{r}
 data %>% group_by(personal_status) %>% summarise(count = n())  
-````
+```
 
 What I notice is that this varibale containes two other variables: gender and civil status. I will therefore split it.
 
@@ -282,7 +282,7 @@ What I notice is that this varibale containes two other variables: gender and ci
 data <- data %>% 
   separate(personal_status, into = c("gender", "civil_status"), sep = " ")
 
-````
+```
 
 Once I have splitted it, I can now rename the lables for the civil status variables and 
 change their data types to factor.
@@ -300,20 +300,20 @@ data$civil_status <- factor(data$civil_status,
                             labels = c("unspecified", "single",
                                        "divorced", "married/widowed"))
 
-````
+```
 
 
 **class :  this could be the prediction class**
 
 ```{r}
 data %>% group_by(class) %>% summarise(count = n()) 
-````
+```
 
 It has 2 classes. Let change the data type to factor.
 ```{r}
 data$class <- factor(data$class)
 
-````
+```
 
 At this point, I have familiarized myself with the data set. I know almost everything
 about the dataset such as what types of variables it contains and what inputs those 
@@ -333,7 +333,7 @@ labels, I will check if my dataset contains any missing values.
 
 ```{r}
 any(is.na(data))
-````
+```
 
 Fortunately, the dataset has no missing values at all. Therefore, I can conclude 
 thereby the data preprocessing step. In the next workbook, I will apply some
