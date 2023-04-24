@@ -1,0 +1,343 @@
+---
+title: "Data Preprocessing: Cleaning and Profilingg"
+author: "Elie Diwambuena"
+date: "2023-04-24"
+output: html_document
+---
+
+
+In this workboook, I am going to clean a public dataset on credit risk of customers 
+of a typical bank published by SRIHARI P on Kaagle.
+
+### Setting up R environment
+
+As always, I start by loading the library and the dataset.
+
+```{r}
+library(tidyverse)
+
+# load dataset
+file_path = "credit_customers.csv"
+data <- read.csv(file_path, stringsAsFactors = F)
+
+```
+
+Now that I have loaded the dataset and the required library, I will check for the
+structure of the dataset and look for some disparities or inconsistencies.
+
+
+### Familiarizing with the dataset
+
+**check data structure**
+```{r}
+str(data)
+```
+
+As shown in the output, the data has 1000 observations and 21 variables. What is
+quite noticeable are the weird symbols inside some variables such as checking_status,
+employment, personal_status etc. This leads me to look into those variables and
+try to understand if those annotations are errors or actual inputs. For that, I will
+look closely into each variables that might carry potential errors.
+
+
+**checking_status**
+
+Let start by grouping data into checking_status groups or categories.
+
+```{r}
+data %>% group_by(checking_status) %>% summarise(count = n()) 
+```
+
+The presumed weird symbols are actually inputs. The variable "checking_satus" 
+records whether the applicant or customer has a checking account and if so, the 
+amount held in the account. Thus, we have 4 categories. The entry 0<=X<200 means that the customer has a checking account with an amount of less than 200. However, this way of recording inputs is very unprofessional and it makes difficult to interprete later on. Hence, I will label them differently, change the data type and order them. It makes sense to order these categories because a person with a negative balance in the checking
+account will likely have higher chance of defaulting on a loan.
+
+
+```{r}
+data$checking_status <- factor(data$checking_status, 
+                               levels = c("<0", "0<=X<200",">=200", "no checking"),
+                               labels = c("negative", "less than 200", 
+                                          "more than or = 200", "no checking"))
+data %>% group_by(checking_status) %>% summarise(count = n()) 
+```
+
+
+î have labelled and ordered them as negative (<0), less than 200, more than or = 200,
+and no checking. Then, I will do the same thing for the remaining variables.
+
+
+**credit history**
+``` {r}
+data %>% group_by(credit_history) %>% summarise(count = n()) 
+````
+
+It had 5 categories in credit history. Let change the label and provide an order.
+```{r}
+data$credit_history <- factor(data$credit_history,
+                              levels = c("critical/other existing credit",
+                                         "delayed previously", "existing paid",
+                                         "no credits/all paid", "all paid"),
+                              labels = c("dully paid", "critical", "delayed",
+                                        "dully paying", "no credits"))
+
+data %>% group_by(credit_history) %>% summarise(count = n()) 
+```
+
+
+**savings status**
+
+```{r}
+data %>% group_by(savings_status) %>% summarise(count = n()) 
+````
+
+It also has 5 categories in savings status. let change the label and provide an order.
+
+```{r}
+data$savings_status <- factor(data$savings_status,
+                              levels = c("no known savings", "<100", "100<=X<500",
+                                         "500<=X<1000", ">=1000"),
+                              labels = c("between 100 and 499", 
+                                         "between 500 and 999",
+                                         "less than 100",
+                                         "more than or = 1000",
+                                         "no savingss"))
+
+data %>% group_by(savings_status) %>% summarise(count = n()) 
+```
+
+
+**employment: in years**
+
+```{r}
+data %>% group_by(employment) %>% summarise(count = n()) 
+````
+
+It has 5 categories in employment. I will again change the label and provide an order.
+
+```{r}
+data$employment <- factor(data$employment,
+                              levels = c("unemployed", "<1", "1<=X<4",
+                                         "4<=X<7", ">=7"),
+                              labels = c("unemployed", "less than 1 year",
+                                         "less than 4 years", "less than 7 years",
+                                         "more than 7 years"))
+
+data %>% group_by(employment) %>% summarise(count = n()) 
+````
+
+
+**purpose**
+
+```{r}
+data %>% group_by(purpose) %>% summarise(count = n()) 
+```
+
+It 10 categories in purpose. I am not going to rename them but I will change the 
+data type to factor.
+
+```{r}
+data$purpose <- factor(data$purpose)
+```
+
+
+***foreign worker ***
+
+```{r}
+data %>% group_by(foreign_worker) %>% summarise(count = n()) 
+````
+
+It has 2 categories. Let change the data type to factor.
+
+```{r}
+data$foreign_worker <- factor(data$foreign_worker)
+```
+
+
+**own_telephone **
+
+```{r}
+data %>% group_by(own_telephone) %>% summarise(count = n()) 
+````
+
+It also has 2 categories. I will change the data type to factor and rename the label.
+
+```{r}
+data$own_telephone <- factor(data$own_telephone,
+                             labels= c("no", "yes"))
+````
+
+
+**job**
+
+```{r}
+data %>% group_by(job) %>% summarise(count = n()) 
+````
+
+It has 4 categories. I will let change the label and the order.
+
+```{r}
+data$job <- factor(data$job,
+                             levels = c("unemp/unskilled non res",
+                                        "unskilled resident", "skilled",
+                                        "high qualif/self emp/mgmt"),
+                             labels= c("unskilled non-res", 
+                                       "unskilled res",
+                                       "skilled", 
+                                       "highly qualified"))
+
+data %>% group_by(job) %>% summarise(count = n()) 
+```
+
+
+**housing **
+
+```{r}
+data %>% group_by(housing) %>% summarise(count = n()) 
+````
+
+It has 3 categories.Again, let change the label and the order.
+
+```{r}
+data$housing <- factor(data$housing,
+                   levels = c("rent", "for free", "own"),
+                   labels= c("rented", "free use", "owned"))
+
+data %>% group_by(housing) %>% summarise(count = n())
+````
+                         
+
+**other payment plans: other debts **
+
+```{r}
+data %>% group_by(other_payment_plans) %>% summarise(count = n()) 
+````
+
+It has 3 categories. Let change the label and the order.
+
+```{r}
+data$other_payment_plans <- factor(data$other_payment_plans,
+                       levels = c("bank", "stores", "none"),
+                       labels= c("bank debt", "purchase debt", "no debt"))
+
+data %>% group_by(other_payment_plans) %>% summarise(count = n()) 
+````
+
+
+**property magnitude: collateral**
+
+```{r}
+data %>% group_by(property_magnitude) %>% summarise(count = n()) 
+```
+
+It has 3 categories. Once again, let change the label and the order.
+
+```{r}
+data$property_magnitude <- factor(data$property_magnitude,
+                                   levels = c("no known property", 
+                                              "life insurance", 
+                                              "car",
+                                              "real estate"),
+                                   labels= c("no collateral", 
+                                             "life insurance", 
+                                             "vehicle", 
+                                             "real estate"))
+
+data %>% group_by(property_magnitude) %>% summarise(count = n()) 
+```
+
+
+**other parties to the loan: guarantee **
+
+```{r}
+data %>% group_by(other_parties) %>% summarise(count = n()) 
+````
+
+It has 3 categories. I will change the label and the order.
+
+```{r}
+data$other_parties <- factor(data$other_parties,
+                                  levels = c("none", 
+                                             "co applicant",
+                                             "guarantor"),
+                                  labels= c("individual", 
+                                            "co-aplicant", 
+                                            "guaranteed"))
+
+data %>% group_by(other_parties) %>% summarise(count = n()) 
+````
+
+
+**personal_status**
+
+```{r}
+data %>% group_by(personal_status) %>% summarise(count = n())  
+````
+
+What I notice is that this varibale containes two other variables: gender and civil status. I will therefore split it.
+
+```{r}
+# one for gender and the other for civil status
+
+data <- data %>% 
+  separate(personal_status, into = c("gender", "civil_status"), sep = " ")
+
+````
+
+Once I have splitted it, I can now rename the lables for the civil status variables and 
+change their data types to factor.
+
+```{r}
+# factor gender
+data$gender <- factor(data$gender)
+
+# label civil status and order
+data %>% group_by(civil_status) %>% summarise(count = n())  
+
+data$civil_status <- factor(data$civil_status, 
+                            levels = c("div/dep/mar","single", 
+                                       "div/sep", "mar/wid"),
+                            labels = c("unspecified", "single",
+                                       "divorced", "married/widowed"))
+
+````
+
+
+**class :  this could be the prediction class**
+
+```{r}
+data %>% group_by(class) %>% summarise(count = n()) 
+````
+
+It has 2 classes. Let change the data type to factor.
+```{r}
+data$class <- factor(data$class)
+
+````
+
+At this point, I have familiarized myself with the data set. I know almost everything
+about the dataset such as what types of variables it contains and what inputs those 
+variables carry, the data types and the size of the dataset. 
+
+It is not necessary and can be teadious to rename labels for each variables. This
+can be later on a needed basis. However, I choose to rename them a this point as part
+of my familiarizing process and also to make them convey more meaning. If I happen to
+open this dataset after a long period, I will have no difficulties understanding it.
+
+
+
+### Checking for missing values 
+
+Now that I have checked the structure of my dataset and correct for datatypes and
+labels, I will check if my dataset contains any missing values.
+
+```{r}
+any(is.na(data))
+````
+
+Fortunately, the dataset has no missing values at all. Therefore, I can conclude 
+thereby the data preprocessing step. In the next workbook, I will apply some
+visualization technics to the dataset to understand the relation between variables.
+
+
+# End
